@@ -1,0 +1,76 @@
+Sub FtpFileMacro()
+‘This does all FTP related task
+Dim wb As Workbook
+Set wb = ActiveWorkbook
+    Sheets(1).Activate
+    Call doDelimitedStuff
+    Call pasteToCashin
+    
+    Sheets(2).Activate
+    Call doDelimitedStuff
+    Call pasteToCashin
+
+    Sheets(3).Activate
+    Call doDelimitedStuff
+    Call pasteToCashin
+    
+    Call saveAs
+    
+    wb.Close
+
+End Sub
+Sub pasteToCashin()
+
+Dim y As Workbook
+Dim wb As Workbook
+Set wb = ActiveWorkbook
+If ActiveSheet.Name Like "ret_cash*" Then
+
+    Range("D1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.Copy
+    Set y = Workbooks.Open("W:\Shared\FTP Files\FTP Worksheet.xlsx")
+    
+    y.Sheets(1).Range("g100").PasteSpecial
+            
+End If
+If ActiveSheet.Name Like "ret_jack*" Then
+
+    Range("B1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.Copy
+    Set y = Workbooks.Open("W:\Shared\FTP Files\FTP Worksheet.xlsx")
+    y.Sheets(1).Range("h2").PasteSpecial
+       
+End If
+wb.Activate
+
+End Sub
+
+Sub doDelimitedStuff()
+
+    Columns("A:A").Select
+    Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=True, _
+        Semicolon:=False, Comma:=False, Space:=False, Other:=True, OtherChar _
+        :="|", FieldInfo:=Array(Array(1, 9), Array(2, 2), Array(3, 1), Array(4, 1), Array(5, _
+        1), Array(6, 1), Array(7, 1), Array(8, 1)), TrailingMinusNumbers:=True
+    Columns("A:A").EntireColumn.AutoFit
+
+End Sub
+Sub saveAs()
+' saveAs Macro
+Dim path As String
+    path = "W:\Shared\FTP Files\2023\"
+Dim dtToday As String
+    dtToday = Format(Date - 1, "mm-dd-yy")
+   
+ChDir "W:\Shared\FTP Files\2023"
+    ActiveWorkbook.saveAs Filename:= _
+        path & dtToday, FileFormat:= _
+        xlOpenXMLWorkbook, CreateBackup:=False
+
+End Sub
+
